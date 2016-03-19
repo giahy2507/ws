@@ -15,6 +15,8 @@ if __name__ == "__main__":
 
     X_train = np.array(X_train,dtype= np.int32)
     Y_train = np.array(Y_train,dtype= np.int32)
+    X_validation = np.array(X_validation, dtype=np.int32)
+    Y_validation = np.array(Y_validation,dtype= np.int32)
     X_test, Y_test = X_train[:100], Y_train[:100]
 
     with open("model/vocab.bin", mode="rb") as f:
@@ -24,7 +26,7 @@ if __name__ == "__main__":
 
     print(X_train.shape, Y_train.shape,X_validation.shape,Y_validation.shape,X_test.shape,Y_test.shape)
 
-    batch_size=100
+    batch_size=1000
     number_featuremaps = 20
     sentence_length = 5
     embsize = 500
@@ -85,19 +87,19 @@ if __name__ == "__main__":
         for start_idx in range(0, X_train.shape[0], batch_size):
             if start_idx + batch_size > X_train.shape[0]:
                 # print("Out of size")
-                continue
+                break
             mnb_X = X_train[train_rand_idxs[start_idx: start_idx + batch_size]]
             mnb_Y  = Y_train[train_rand_idxs[start_idx: start_idx + batch_size]]
             train_cost, train_err = train_model(mnb_X, mnb_Y)
             train_costs.append(train_cost)
             train_errs.append(train_err)
-            print ("Epoch "+str(epoch_i)+" Train cost: "+ str(train_cost)+ "Train mae: "+ str(train_err))
+            #print ("Epoch "+str(epoch_i)+" Train cost: "+ str(train_cost)+ "Train mae: "+ str(train_err))
 
         np.random.shuffle(valid_rand_idx)
         for start_idx in range(0, X_validation.shape[0], batch_size):
             if start_idx + batch_size > X_validation.shape[0]:
                 # print("Out of size")
-                continue
+                break
             mnb_X = X_validation[valid_rand_idx[start_idx: start_idx + batch_size]]
             mnb_Y  = Y_validation[valid_rand_idx[start_idx: start_idx + batch_size]]
             valid_cost, valid_err = valid_model(mnb_X, mnb_Y)
