@@ -83,6 +83,9 @@ if __name__ == "__main__":
 
         np.random.shuffle(train_rand_idxs)
         for start_idx in range(0, X_train.shape[0], batch_size):
+            if start_idx + batch_size > X_train.shape[0]:
+                # print("Out of size")
+                continue
             mnb_X = X_train[train_rand_idxs[start_idx: start_idx + batch_size]]
             mnb_Y  = Y_train[train_rand_idxs[start_idx: start_idx + batch_size]]
             train_cost, train_err = train_model(mnb_X, mnb_Y)
@@ -92,8 +95,11 @@ if __name__ == "__main__":
 
         np.random.shuffle(valid_rand_idx)
         for start_idx in range(0, X_validation.shape[0], batch_size):
-            mnb_X = X_validation[train_rand_idxs[start_idx: start_idx + batch_size]]
-            mnb_Y  = Y_validation[train_rand_idxs[start_idx: start_idx + batch_size]]
+            if start_idx + batch_size > X_validation.shape[0]:
+                # print("Out of size")
+                continue
+            mnb_X = X_validation[valid_rand_idx[start_idx: start_idx + batch_size]]
+            mnb_Y  = Y_validation[valid_rand_idx[start_idx: start_idx + batch_size]]
             valid_cost, valid_err = valid_model(mnb_X, mnb_Y)
             valid_costs.append(valid_cost)
             valid_errs.append(valid_err)
@@ -102,7 +108,6 @@ if __name__ == "__main__":
         train_cost = np.mean(np.array(train_costs))
         val_err = np.mean(np.array(valid_errs))
         val_cost = np.mean(np.array(valid_costs))
-        print
 
         if best_valid_err > val_err:
             best_valid_err = val_err
