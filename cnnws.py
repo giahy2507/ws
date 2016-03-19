@@ -6,9 +6,9 @@ import numpy as np
 import theano
 import theano.tensor as T
 from preparedata4cnn import Vocabulary
+import sys
 
 if __name__ == "__main__":
-    print("__main__")
 
     with open("data/vtb.pre.txt.train.np", mode="rb") as f:
         X_train, Y_train, X_validation, Y_validation = pickle.load(f)
@@ -24,7 +24,8 @@ if __name__ == "__main__":
 
     vocab_size = len(vocabulary.word_index.keys())
 
-    print(X_train.shape, Y_train.shape,X_validation.shape,Y_validation.shape,X_test.shape,Y_test.shape)
+    sys.stdout.write(str(X_train.shape)+ str(Y_train.shape) + str(X_validation.shape) + str(Y_validation.shape) + str(X_test.shape) + str(Y_test.shape))
+    sys.stdout.flush()
 
     batch_size=1000
     number_featuremaps = 20
@@ -113,10 +114,12 @@ if __name__ == "__main__":
 
         if best_valid_err > val_err:
             best_valid_err = val_err
-            print ("Epoch "+str(epoch_i)+" Train cost: "+ str(train_cost)+ "Train mae: "+ str(train_err) + " Validation cost: "+ str(valid_cost)+" Validation mae "+ str(val_err)  + ",counter "+str(counter)+ " __best__ ")
+            sys.stdout.write("Epoch "+str(epoch_i)+" Train cost: "+ str(train_cost)+ "Train mae: "+ str(train_err) + " Validation cost: "+ str(valid_cost)+" Validation mae "+ str(val_err)  + ",counter "+str(counter)+ " __best__ \n")
+            sys.stdout.flush()
             counter = 0
             with open("model/saveweight.bin", mode="wb") as f:
                 pickle.dump(params,f)
         else:
             counter +=1
-            print ("Epoch "+str(epoch_i)+" Train cost: "+ str(train_cost)+ "Train mae: "+ str(train_err) + " Validation cost: "+ str(valid_cost)+" Validation mae "+ str(val_err)  + ",counter "+str(counter))
+            sys.stdout.write("Epoch "+str(epoch_i)+" Train cost: "+ str(train_cost)+ "Train mae: "+ str(train_err) + " Validation cost: "+ str(valid_cost)+" Validation mae "+ str(val_err)  + ",counter "+str(counter) + "\n")
+            sys.stdout.flush()
