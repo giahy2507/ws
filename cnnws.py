@@ -7,6 +7,7 @@ import theano
 import theano.tensor as T
 from preparedata4cnn import Vocabulary
 import sys
+from lasagne.updates import adam
 
 if __name__ == "__main__":
 
@@ -27,12 +28,12 @@ if __name__ == "__main__":
     sys.stdout.write(str(X_train.shape)+ str(Y_train.shape) + str(X_validation.shape) + str(Y_validation.shape) + str(X_test.shape) + str(Y_test.shape))
     sys.stdout.flush()
 
-    batch_size=1000
-    number_featuremaps = 20
+    batch_size=100
+    number_featuremaps = 500
     sentence_length = 5
     embsize = 500
     learning_rate = 0.1
-    filter_shape_encode = (20,1,3,embsize)
+    filter_shape_encode = (number_featuremaps,1,3,embsize)
     rng = np.random.RandomState(23455)
 
     X = T.matrix('X')
@@ -41,11 +42,11 @@ if __name__ == "__main__":
 
     layer_projection = ProjectionLayer(X,vocab_size,embsize,X.shape,[None])
 
-    layer_conv = MyConvLayer(rng, layer_projection.output,image_shape=(batch_size,1,sentence_length,embsize),filter_shape=filter_shape_encode,border_mode="valid",activation = T.nnet.sigmoid, params=[None,None])
+    layer_conv = MyConvLayer(rng, layer_projection.output,image_shape=(batch_size,1,sentence_length,embsize),filter_shape=filter_shape_encode,border_mode="valid",activation = T.tanh, params=[None,None])
 
     layer_input = layer_conv.output.flatten(2)
     layer_input_shape = (batch_size,layer_conv.output_shape[1] * layer_conv.output_shape[2] * layer_conv.output_shape[3])
-    layer_hidden = FullConectedLayer(layer_input, layer_input_shape[1] , 100, activation = T.nnet.sigmoid, params=[None,None])
+    layer_hidden = FullConectedLayer(layer_input, layer_input_shape[1] , 100, activation = T.tanh, params=[None,None])
 
     layer_classification =  SoftmaxLayer(input=layer_hidden.output, n_in=100, n_out=2)
 
@@ -54,7 +55,10 @@ if __name__ == "__main__":
     cost = layer_classification.negative_log_likelihood(Y) + 0.001*(layer_projection.L2 + layer_conv.L2 +layer_classification.L2 + layer_hidden.L2)
 
     params = layer_projection.params + layer_conv.params + layer_hidden.params + layer_classification.params
-
+    
+    updates = adam(cost,params)
+    
+    """
     gparams = []
     for param in params:
         gparam = T.grad(cost, param)
@@ -62,7 +66,7 @@ if __name__ == "__main__":
     updates = []
     for param, gparam in zip(params, gparams):
         updates.append((param, param - learning_rate* gparam))
-
+    """
     train_model = theano.function(inputs=[X,Y], outputs=[cost, err],updates=updates,on_unused_input="ignore")
     valid_model = theano.function(inputs=[X,Y], outputs=[cost, err],on_unused_input="ignore")
     show_function = theano.function(inputs=[X,Y], outputs=[layer_projection.output, layer_conv.output, layer_hidden.input, layer_classification.p_y_given_x, err], on_unused_input="ignore")
