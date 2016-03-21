@@ -40,15 +40,20 @@ if __name__ == "__main__":
     Y = T.ivector('Y')
     image_shape = (batch_size,1,sentence_length,embsize)
 
-    layer_projection = ProjectionLayer(X,vocab_size,embsize,X.shape,[None])
+    params = [None] * 7
 
-    layer_conv = MyConvLayer(rng, layer_projection.output,image_shape=(batch_size,1,sentence_length,embsize),filter_shape=filter_shape_encode,border_mode="valid",activation = T.tanh, params=[None,None])
+    with open("model/saveweight.bin", mode="rb") as f:
+        params = pickle.load(f)
+
+    layer_projection = ProjectionLayer(X,vocab_size,embsize,X.shape,params=[params[0]])
+
+    layer_conv = MyConvLayer(rng, layer_projection.output,image_shape=(batch_size,1,sentence_length,embsize),filter_shape=filter_shape_encode,border_mode="valid",activation = T.tanh, params=params[1:3])
 
     layer_input = layer_conv.output.flatten(2)
     layer_input_shape = (batch_size,layer_conv.output_shape[1] * layer_conv.output_shape[2] * layer_conv.output_shape[3])
-    layer_hidden = FullConectedLayer(layer_input, layer_input_shape[1] , 100, activation = T.tanh, params=[None,None])
+    layer_hidden = FullConectedLayer(layer_input, layer_input_shape[1] , 100, activation = T.tanh, params=params[3:5])
 
-    layer_classification =  SoftmaxLayer(input=layer_hidden.output, n_in=100, n_out=2)
+    layer_classification =  SoftmaxLayer(input=layer_hidden.output, n_in=100, n_out=2, params=params[5:7])
 
     err = layer_classification.error(Y)
 

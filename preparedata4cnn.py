@@ -20,23 +20,26 @@ class Vocabulary(object):
             pickle.dump(self, f)
 
     def get_index(self, word):
-        A = Vocabulary.str_intersection(word, self.alphabet)
+        A = Vocabulary.str_intersection(word.lower(), self.alphabet)
         if len(A) == len(word):
             # push to dictionany, freq += 1
-            if word in self.word_index.keys():
-                index = self.word_index[word]
+            if word.lower() in self.word_index.keys():
+                index = self.word_index[word.lower()]
             else:
                 index = 1
         else:
             index = 0
-
         return index
 
     @classmethod
     def load(cls, file):
-        with open(file, mode="rb") as f:
-            vocab = pickle.load(f)
-            return Vocabulary(vocab.word_index, vocab.word_freq,  vocab.alphabet, vocab.min_count)
+        if os.path.isfile(file):
+            with open(file, mode="rb") as f:
+                vocab = pickle.load(f)
+                return Vocabulary(vocab.word_index, vocab.word_freq,  vocab.alphabet, vocab.min_count)
+        else:
+            print("No such file !")
+            return None
 
     @classmethod
     def filter_with_min_count(cls, word_freq, min_count):
@@ -112,6 +115,8 @@ class Vocabulary(object):
     def sen_2_index(self, sentence = "", tagset = "YN"):
         sentence_result = []
         tag_result = []
+        syllables_result = []
+
         words = sentence.split()
         for word in words:
             syllables = word.split('_')
@@ -120,6 +125,7 @@ class Vocabulary(object):
                 sys.exit(2)
             elif len(syllables) == 1:
                 sentence_result.append(self.get_index(syllables[0]))
+                syllables_result.append(syllables[0])
                 if tagset == "YN":
                     tag_result.append(0)
                 else:
@@ -129,11 +135,12 @@ class Vocabulary(object):
                 if tagset == "YN":
                     for syllable_idx in range(len(syllables)):
                         sentence_result.append(self.get_index(syllables[syllable_idx]))
+                        syllables_result.append(syllables[syllable_idx])
                         if syllable_idx == len(syllables) -1:
                             tag_result.append(0)
                         else:
                             tag_result.append(1)
-        return sentence_result, tag_result
+        return sentence_result, syllables_result , tag_result
 
 def gen_data_from_sentence_indexs(words_index, labels):
     """
@@ -195,7 +202,7 @@ if __name__ == "__main__":
         if i % 1000 == 0:
             print("Prepare data line: ", i)
         A = line.replace("_"," ").split()
-        sentence_indexs, tag_results = vocabulary.sen_2_index(line)
+        sentence_indexs, syllables_result, tag_results = vocabulary.sen_2_index(line)
 
         if (len(sentence_indexs) != len(tag_results)):
             print("2 thang nay ko bang ne")
