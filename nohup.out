@@ -1,1 +1,22 @@
-(315408, 5)(315408,)(78852, 5)(78852,)(100, 5)(100,)
+(315408, 5)(315408,)(78852, 5)(78852,)(100, 5)(100,)Epoch 1 Train cost: 179.304311962Train mae: 0.144920634921 Validation cost: 7.032224540724053 Validation mae 0.0731538461538,counter 0 __best__ 
+Epoch 2 Train cost: 1.69011299813Train mae: 0.0652984126984 Validation cost: 0.3250765300760867 Validation mae 0.0624871794872,counter 0 __best__ 
+Epoch 3 Train cost: 0.262616817953Train mae: 0.0592317460317 Validation cost: 0.249752920890971 Validation mae 0.0616282051282,counter 0 __best__ 
+Epoch 4 Train cost: 0.239645653366Train mae: 0.0563111111111 Validation cost: 0.23014904856607404 Validation mae 0.0571538461538,counter 0 __best__ 
+Epoch 5 Train cost: 0.232524346899Train mae: 0.0537650793651 Validation cost: 0.2231290411538731 Validation mae 0.0537692307692,counter 0 __best__ 
+Epoch 6 Train cost: 0.22672103582Train mae: 0.0514634920635 Validation cost: 0.25515440941688505 Validation mae 0.0542435897436,counter 1
+Epoch 7 Train cost: 0.222933971089Train mae: 0.0495238095238 Validation cost: 0.22690465349654276 Validation mae 0.0527948717949,counter 1 __best__ 
+Epoch 8 Train cost: 0.219899578393Train mae: 0.0483555555556 Validation cost: 0.2053711420168744 Validation mae 0.0515512820513,counter 0 __best__ 
+Epoch 9 Train cost: 0.217837791805Train mae: 0.0473746031746 Validation cost: 0.21426329556305693 Validation mae 0.0520256410256,counter 1
+Epoch 10 Train cost: 0.216801252468Train mae: 0.0468857142857 Validation cost: 0.22894742577423383 Validation mae 0.0516923076923,counter 2
+Epoch 11 Train cost: 0.214670703932Train mae: 0.0459587301587 Validation cost: 0.21290808005092898 Validation mae 0.0519615384615,counter 3
+Epoch 12 Train cost: 0.213344949821Train mae: 0.0457333333333 Validation cost: 0.22660429081782701 Validation mae 0.0511666666667,counter 3 __best__ 
+Epoch 13 Train cost: 0.212133147119Train mae: 0.0447555555556 Validation cost: 0.24307028084052307 Validation mae 0.052358974359,counter 1
+Epoch 14 Train cost: 0.21219461339Train mae: 0.0441619047619 Validation cost: 0.21064229097333115 Validation mae 0.0491794871795,counter 1 __best__ 
+Epoch 15 Train cost: 0.21082649555Train mae: 0.0438857142857 Validation cost: 0.21675537572291967 Validation mae 0.049641025641,counter 1
+Epoch 16 Train cost: 0.20957823045Train mae: 0.0432126984127 Validation cost: 0.20092946688819535 Validation mae 0.0494615384615,counter 2
+Epoch 17 Train cost: 0.208809668604Train mae: 0.0428380952381 Validation cost: 0.22110506743804417 Validation mae 0.0497948717949,counter 3
+Epoch 18 Train cost: 0.208675334447Train mae: 0.0426 Validation cost: 0.20465803754214212 Validation mae 0.0488333333333,counter 3 __best__ 
+Epoch 19 Train cost: 0.208034687477Train mae: 0.0426317460317 Validation cost: 0.22476715998197366 Validation mae 0.0495641025641,counter 1
+Epoch 20 Train cost: 0.207293334708Train mae: 0.0423142857143 Validation cost: 0.22628768205181876 Validation mae 0.0479102564103,counter 1 __best__ 
+Epoch 21 Train cost: 0.208242560277Train mae: 0.0420698412698 Validation cost: 0.21565049279641435 Validation mae 0.0482692307692,counter 1
+Epoch 22 Train cost: 0.206830755253Train mae: 0.0419523809524 Validation cost: 0.22651819331598938 Validation mae 0.0484743589744,counter 2

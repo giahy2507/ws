@@ -28,7 +28,7 @@ if __name__ == "__main__":
     sys.stdout.write(str(X_train.shape)+ str(Y_train.shape) + str(X_validation.shape) + str(Y_validation.shape) + str(X_test.shape) + str(Y_test.shape))
     sys.stdout.flush()
 
-    batch_size=100
+    batch_size=1000
     number_featuremaps = 500
     sentence_length = 5
     embsize = 500
