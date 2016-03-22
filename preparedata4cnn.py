@@ -1,7 +1,10 @@
 import os
 import numpy as np
 import pickle
+from sys import stdout
+import time
 import sys
+
 
 class Vocabulary(object):
     def __init__(self, word_index, word_freq, alphabet, min_count):
@@ -182,18 +185,24 @@ if __name__ == "__main__":
 
     with open("model/vocab.bin", mode="rb") as f:
         vocabulary = pickle.load(f)
+    print("Finish read Vocab")
 
     with open("data/vtb.pre.txt", mode="r") as f:
         lines = f.readlines()
+    print("Finish read vtb")
 
     # [index_A index_B index_C index_D index E] ---------- label_C
 
     X = np.array([[0,0,0,0,0]])
     Y = np.array([0])
 
+    start = time.clock()
     for i, line in enumerate(lines):
-        if i % 1000 == 0:
-            print("Prepare data line: ", i)
+        if i % 10000 == 0:
+            end = time.clock()
+            sys.stdout.write("Prepare data from line "+ str( i - 10000) +  " to line " +str(i) +" : " + str( int(end - start) )+ "s\n")
+            sys.stdout.flush()
+            start = time.clock()
         A = line.replace("_"," ").split()
         sentence_indexs, tag_results = vocabulary.sen_2_index(line)
 
@@ -206,14 +215,42 @@ if __name__ == "__main__":
 
     print(X.shape)
     print(Y.shape)
+    print("Finish process vtb")
+
+    fi = open("data/vcl.pre.txt", mode="r")
+    print("Processing vtb")
+
+    start = time.clock()
+    for i, line in enumerate(fi):
+        if i % 10000 == 0:
+            end = time.clock()
+            sys.stdout.write("Prepare data from line "+ str( i - 10000) +  " to line " +str(i) +" : " + str( int(end - start) )+ "s\n")
+            sys.stdout.flush()
+            start = time.clock()
+        if i % 100000 == 0:
+            valid_number = int(X.shape[0]*0.8)
+            X_train, Y_train, X_validation, Y_validation = X[:valid_number], Y[:valid_number], X[valid_number:], Y[valid_number:]
+            with open("data/vtb.pre.txt.train.nparray", mode="wb") as f:
+                pickle.dump((X_train, Y_train, X_validation, Y_validation),f)
+            print("Saved data to ", "data/vtb.pre.txt.train.nparray")
+            start = time.clock()
+        A = line.replace("_"," ").split()
+        sentence_indexs, tag_results = vocabulary.sen_2_index(line)
+
+        if (len(sentence_indexs) != len(tag_results)):
+            print("2 thang nay ko bang ne")
+        else:
+            xx, yy = gen_data_from_sentence_indexs(sentence_indexs,tag_results)
+            X = np.concatenate((X,xx), axis=0)
+            Y = np.concatenate((Y,yy))
+    fi.close()
+    print("Finish process vcl")
 
     valid_number = int(X.shape[0]*0.8)
     X_train, Y_train, X_validation, Y_validation = X[:valid_number], Y[:valid_number], X[valid_number:], Y[valid_number:]
-
-    with open("data/vtb.pre.txt.train.np", mode="wb") as f:
+    with open("data/vtb.pre.txt.train.nparray", mode="wb") as f:
         pickle.dump((X_train, Y_train, X_validation, Y_validation),f)
-
-    print("Saved data to ", "data/vtb.pre.txt.train.np")
+    print("Saved data to ", "data/vtb.pre.txt.train.nparray")
 
 
 

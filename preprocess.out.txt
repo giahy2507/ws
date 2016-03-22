@@ -1,0 +1,56 @@
+Finish read Vocab
+Finish read vtb
+Prepare data from line -10000 to line 0 : 0s
+Prepare data from line 0 to line 10000 : 48s
+(394260, 5)
+(394260,)
+Finish process vtb
+Processing vtb
+Prepare data from line -10000 to line 0 : 0s
+Saved data to  data/vtb.pre.txt.train.nparray
+Prepare data from line 0 to line 10000 : 102s
+Prepare data from line 10000 to line 20000 : 137s
+Prepare data from line 20000 to line 30000 : 173s
+Prepare data from line 30000 to line 40000 : 209s
+Prepare data from line 40000 to line 50000 : 253s
+Prepare data from line 50000 to line 60000 : 326s
+Prepare data from line 60000 to line 70000 : 425s
+Prepare data from line 70000 to line 80000 : 499s
+Prepare data from line 80000 to line 90000 : 569s
+Prepare data from line 90000 to line 100000 : 637s
+Saved data to  data/vtb.pre.txt.train.nparray
+Prepare data from line 100000 to line 110000 : 719s
+Prepare data from line 110000 to line 120000 : 799s
+Prepare data from line 120000 to line 130000 : 910s
+Prepare data from line 130000 to line 140000 : 1014s
+Prepare data from line 140000 to line 150000 : 1098s
+Prepare data from line 150000 to line 160000 : 1177s
+Prepare data from line 160000 to line 170000 : 1259s
+Prepare data from line 170000 to line 180000 : 1340s
+Prepare data from line 180000 to line 190000 : 1416s
+Prepare data from line 190000 to line 200000 : 1496s
+Saved data to  data/vtb.pre.txt.train.nparray
+Prepare data from line 200000 to line 210000 : 1583s
+Prepare data from line 210000 to line 220000 : 1662s
+Prepare data from line 220000 to line 230000 : 1742s
+Prepare data from line 230000 to line 240000 : 1832s
+Prepare data from line 240000 to line 250000 : 1926s
+Prepare data from line 250000 to line 260000 : 2001s
+Prepare data from line 260000 to line 270000 : 2085s
+Prepare data from line 270000 to line 280000 : 2158s
+Prepare data from line 280000 to line 290000 : 2298s
+Prepare data from line 290000 to line 300000 : 2415s
+Saved data to  data/vtb.pre.txt.train.nparray
+Prepare data from line 300000 to line 310000 : 2696s
+Prepare data from line 310000 to line 320000 : 2760s
+Prepare data from line 320000 to line 330000 : 2878s
+Prepare data from line 330000 to line 340000 : 2896s
+Prepare data from line 340000 to line 350000 : 2725s
+Prepare data from line 350000 to line 360000 : 2774s
+Prepare data from line 360000 to line 370000 : 2861s
+Prepare data from line 370000 to line 380000 : 2952s
+Prepare data from line 380000 to line 390000 : 3030s
+Prepare data from line 390000 to line 400000 : 3114s
+Saved data to  data/vtb.pre.txt.train.nparray
+Prepare data from line 400000 to line 410000 : 3223s
+Prepare data from line 410000 to line 420000 : 3307s
