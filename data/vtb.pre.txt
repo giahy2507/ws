@@ -1,4 +1,4 @@
-﻿tại tp . hcm , từ tháng #number #number các cơ_quan công_quyền bố_trí làm_việc thêm buổi sáng thứ_bảy .
+﻿Tại TP . hcm , từ tháng #number #number các cơ_quan công_quyền bố_trí làm_việc thêm buổi sáng thứ_bảy .
 theo khảo_sát tổng_hợp mới nhất của sở nội_vụ tp , hơn một năm qua , tại các sở ngành số_lượng hồ_sơ giải_quyết vào sáng thứ_bảy chỉ bằng #date % so với ngày thường .
 người dân đến chứng giấy_tờ tại ubnd phường #number , quận bình_thạnh ( tp . hcm ) sáng thứ_bảy #number #number #number .
 hiện_nay có hai luồng ý_kiến khác nhau , một là dừng làm_việc sáng thứ_bảy , kéo dài thêm giờ ngày thường ; hai là vẫn duy_trì làm_việc sáng thứ_bảy dù vắng người đến giải_quyết công_việc .

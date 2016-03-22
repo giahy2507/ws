@@ -191,7 +191,7 @@ class ProjectionLayer(object):
                                    name = "wordembedding",
                                    borrow=True)
         else:
-            self.words_embedding = params
+            self.words_embedding = params[0]
 
         self.output_shape = (input_shape[0],1,input_shape[1],embsize)
         self.output = self.words_embedding[T.cast(input.flatten(),dtype="int32")].reshape(self.output_shape)
@@ -210,6 +210,7 @@ class FullConectedLayer(object):
             )
         else:
             self.W, self.b = params[0], params[1]
+
         self.input = input
         self.output = activation(T.dot(input,self.W) + self.b)
         self.params = [self.W, self.b]
