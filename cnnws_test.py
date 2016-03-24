@@ -44,13 +44,16 @@ if __name__ == "__main__":
     start_preparedata = time.clock()
     vocabulary = Vocabulary.load("model/vocab.bin")
     mysentences = []
-    filename = "/home/hynguyen/Documents/data/vcl.100k.txt"
+    filename = "/Users/HyNguyen/Documents/Research/Data/VCL/vcl.1000.txt"
     with open(filename) as f:
         lines = f.readlines()
+
+    total_number = 0
 
     X_test, Y_test = None, None
     for i,line in enumerate(lines):
         mysentence = MySentence.mysentence_from_string(line, vocabulary)
+        total_number += len(mysentence.syllables)
         mysentences.append(mysentence)
         xx, yy = mysentence.gen_data_for_cnn()
         mysentence.data_for_cnn = xx
@@ -63,7 +66,7 @@ if __name__ == "__main__":
     print("Time prepare data = ", end_preparedata - start_preparedata, " s")
 
     start_loadmodel = time.clock()
-    with open("model/saveweight.bin", mode="rb") as f:
+    with open("model/saveweight2.bin", mode="rb") as f:
         params = pickle.load(f)
     end_loadmodel = time.clock()
     print("Time for load NN model = ", end_loadmodel - start_loadmodel, " s")
@@ -82,7 +85,7 @@ if __name__ == "__main__":
 
     image_shape = (batch_size,1,sentence_length,embsize)
 
-    layer_projection = ProjectionLayer(X,vocab_size,embsize,X.shape,[params[0]])
+    layer_projection = ProjectionLayer(X, vocab_size, embsize, (batch_size, sentence_length), [params[0]])
 
     layer_conv = MyConvLayer(rng, layer_projection.output,image_shape=(batch_size,1,sentence_length,embsize),filter_shape=filter_shape_encode,border_mode="valid",activation = T.tanh, params=params[1:3])
 
@@ -95,9 +98,9 @@ if __name__ == "__main__":
     pred = layer_classification.y_pred
 
     pred_function = theano.function(inputs=[X], outputs=pred, on_unused_input="ignore")
+    show_function = theano.function(inputs=[X], outputs=layer_conv.conv_out, on_unused_input="ignore")
     end_confignn = time.clock()
     print("Time for config network ", end_confignn - start_confignn, " s")
-
 
     Y_pred = None
     start_pred = time.clock()
@@ -108,7 +111,6 @@ if __name__ == "__main__":
             X_mnb = np.concatenate((X_mnb, np.zeros((batch_size - X_mnb.shape[0],sentence_length))))
         else:
             X_mnb = X_test[batch_count*batch_size:batch_count*batch_size + batch_size]
-
         Y_mnb = pred_function(X_mnb)
         if Y_pred is None:
             Y_pred = Y_mnb
@@ -132,7 +134,7 @@ if __name__ == "__main__":
     fo.close()
     end_write = time.clock()
     print("Time write to file = ", end_write - start_write, " s")
-
+    print("total number: ",total_number)
 
 
     # B1: change to words_index and save sentence

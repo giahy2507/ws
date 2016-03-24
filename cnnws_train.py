@@ -8,18 +8,22 @@ import theano.tensor as T
 from preparedata4cnn import Vocabulary
 import sys
 from lasagne.updates import adam
+import os
+import time
 
 if __name__ == "__main__":
 
     with open("data/vtb.pre.txt.train.np", mode="rb") as f:
         X_train, Y_train, X_validation, Y_validation = pickle.load(f)
 
-    X_train = np.array(X_train,dtype= np.int32)
-    Y_train = np.array(Y_train,dtype= np.int32)
+    X_train_size = int(X_train.shape[0]/10)
+    X_train = np.array(X_train[:X_train_size],dtype= np.int32)
+    Y_train = np.array(Y_train[:X_train_size],dtype= np.int32)
 
-    x_test_size = int(0.5 * X_validation.shape[0])
-    X_test = np.array(X_validation[x_test_size:], dtype=np.int32)
-    Y_test = np.array(Y_validation[x_test_size:], dtype=np.int32)
+    x_test_size = int(0.1 * X_validation.shape[0])
+
+    X_test = np.array(X_validation[:x_test_size], dtype=np.int32)
+    Y_test = np.array(Y_validation[:x_test_size], dtype=np.int32)
 
     X_validation = np.array(X_validation[:x_test_size], dtype=np.int32)
     Y_validation = np.array(Y_validation[:x_test_size],dtype= np.int32)
@@ -31,7 +35,7 @@ if __name__ == "__main__":
     sys.stdout.write(str(X_train.shape)+ str(Y_train.shape) + str(X_validation.shape) + str(Y_validation.shape) + str(X_test.shape) + str(Y_test.shape))
     sys.stdout.flush()
 
-    batch_size=1000
+    batch_size=100
     number_featuremaps = 500
     sentence_length = 5
     embsize = 500
@@ -44,11 +48,11 @@ if __name__ == "__main__":
     image_shape = (batch_size,1,sentence_length,embsize)
 
     params = [None] * 7
+    if os.path.isfile("model/saveweight.bin"):
+        with open("model/saveweight.bin", mode="rb") as f:
+            params = pickle.load(f)
 
-    with open("model/saveweight.bin", mode="rb") as f:
-        params = pickle.load(f)
-
-    layer_projection = ProjectionLayer(X,vocab_size,embsize,X.shape,params=[params[0]])
+    layer_projection = ProjectionLayer(X, vocab_size, embsize, (batch_size, sentence_length), [params[0]])
 
     layer_conv = MyConvLayer(rng, layer_projection.output,image_shape=(batch_size,1,sentence_length,embsize),filter_shape=filter_shape_encode,border_mode="valid",activation = T.tanh, params=params[1:3])
 
@@ -75,9 +79,10 @@ if __name__ == "__main__":
     for param, gparam in zip(params, gparams):
         updates.append((param, param - learning_rate* gparam))
     """
-    train_model = theano.function(inputs=[X,Y], outputs=[cost, err],updates=updates,on_unused_input="ignore")
-    valid_model = theano.function(inputs=[X,Y], outputs=[cost, err],on_unused_input="ignore")
-    show_function = theano.function(inputs=[X,Y], outputs=[layer_projection.output, layer_conv.output, layer_hidden.input, layer_classification.p_y_given_x, err], on_unused_input="ignore")
+
+    train_model = theano.function(inputs=[X,Y], outputs=[cost, err],updates=updates,on_unused_input="ignore",allow_input_downcast=True)
+    valid_model = theano.function(inputs=[X,Y], outputs=[cost, err],on_unused_input="ignore",allow_input_downcast=True)
+    show_function = theano.function(inputs=[X,Y], outputs=err, on_unused_input="ignore",allow_input_downcast=True)
 
     counter = 0
     best_valid_err = 100
@@ -87,7 +92,7 @@ if __name__ == "__main__":
     train_rand_idxs = list(range(0,X_train.shape[0]))
     valid_rand_idxs = list(range(0,X_validation.shape[0]))
     test_rand_idxs = list(range(0,X_test.shape[0]))
-    # print(train_rand_idxs, valid_rand_idx)
+
     while counter < early_stop:
         epoch_i +=1
 
@@ -101,35 +106,35 @@ if __name__ == "__main__":
         test_errs = []
 
         np.random.shuffle(train_rand_idxs)
-        for start_idx in range(0, X_train.shape[0], batch_size):
-            if start_idx + batch_size > X_train.shape[0]:
-                # print("Out of size")
-                break
-            mnb_X = X_train[train_rand_idxs[start_idx: start_idx + batch_size]]
-            mnb_Y  = Y_train[train_rand_idxs[start_idx: start_idx + batch_size]]
+        batch_number = int(X_train.shape[0] / batch_size)
+        start_train = time.clock()
+        for batch_i in range(batch_number):
+            mnb_X = X_train[train_rand_idxs[batch_i*batch_size: batch_i*batch_size + batch_size]]
+            mnb_Y  = Y_train[train_rand_idxs[batch_i*batch_size: batch_i*batch_size + batch_size]]
+            if mnb_X.shape[0] != batch_size:
+                continue
             train_cost, train_err = train_model(mnb_X, mnb_Y)
             train_costs.append(train_cost)
             train_errs.append(train_err)
-            #print ("Epoch "+str(epoch_i)+" Train cost: "+ str(train_cost)+ "Train mae: "+ str(train_err))
-
+        end_train = time.clock()
         np.random.shuffle(valid_rand_idxs)
-        for start_idx in range(0, X_validation.shape[0], batch_size):
-            if start_idx + batch_size > X_validation.shape[0]:
-                # print("Out of size")
-                break
-            mnb_X = X_validation[valid_rand_idxs[start_idx: start_idx + batch_size]]
-            mnb_Y  = Y_validation[valid_rand_idxs[start_idx: start_idx + batch_size]]
+        batch_number = int(X_validation.shape[0] / batch_size)
+        for start_idx in range(batch_number):
+            mnb_X = X_validation[valid_rand_idxs[batch_i*batch_size: batch_i*batch_size + batch_size]]
+            mnb_Y  = Y_validation[valid_rand_idxs[batch_i*batch_size: batch_i*batch_size + batch_size]]
+            if mnb_X.shape[0] != batch_size:
+                continue
             valid_cost, valid_err = valid_model(mnb_X, mnb_Y)
             valid_costs.append(valid_cost)
             valid_errs.append(valid_err)
 
         np.random.shuffle(test_rand_idxs)
-        for start_idx in range(0, X_test.shape[0], batch_size):
-            if start_idx + batch_size > X_test.shape[0]:
-                # print("Out of size")
-                break
-            mnb_X = X_test[test_rand_idxs[start_idx: start_idx + batch_size]]
-            mnb_Y  = Y_test[test_rand_idxs[start_idx: start_idx + batch_size]]
+        batch_number = int(X_test.shape[0] / batch_size)
+        for start_idx in range(batch_number):
+            mnb_X = X_test[test_rand_idxs[batch_i*batch_size: batch_i*batch_size + batch_size]]
+            mnb_Y  = Y_test[test_rand_idxs[batch_i*batch_size: batch_i*batch_size + batch_size]]
+            if mnb_X.shape[0] != batch_size:
+                continue
             tess_cost, test_err = valid_model(mnb_X, mnb_Y)
             test_costs.append(tess_cost)
             test_errs.append(test_err)
@@ -143,12 +148,12 @@ if __name__ == "__main__":
 
         if best_valid_err > val_err:
             best_valid_err = val_err
-            sys.stdout.write("Epoch "+str(epoch_i)+" Train cost: "+ str(train_cost)+ "Train err: "+ str(train_err) + " Validation cost: "+ str(valid_cost)+" Validation err "+ str(val_err) + " Test cost: "+ str(test_cost)+" Test err "+ str(test_err)  + ",counter "+str(counter)+ " __best__ \n")
+            sys.stdout.write("Epoch "+str(epoch_i)+" Train cost: "+ str(train_cost)+ "Train err: "+ str(train_err) + "Time: " + end_train - start_train + " Validation cost: "+ str(valid_cost)+" Validation err "+ str(val_err) + " Test cost: "+ str(test_cost)+" Test err "+ str(test_err)  + ",counter "+str(counter)+ " __best__ \n")
             sys.stdout.flush()
             counter = 0
             with open("model/saveweight.bin", mode="wb") as f:
                 pickle.dump(params,f)
         else:
             counter +=1
-            sys.stdout.write("Epoch "+str(epoch_i)+" Train cost: "+ str(train_cost)+ "Train err: "+ str(train_err) + " Validation cost: "+ str(valid_cost)+" Validation err "+ str(val_err) + " Test cost: "+ str(test_cost)+" Test err "+ str(test_err)  + ",counter "+str(counter)+ "\n")
+            sys.stdout.write("Epoch "+str(epoch_i)+" Train cost: "+ str(train_cost)+ "Train err: "+ str(train_err) + "Time: " + end_train - start_train + " Validation cost: "+ str(valid_cost)+" Validation err "+ str(val_err) + " Test cost: "+ str(test_cost)+" Test err "+ str(test_err)  + ",counter "+str(counter)+ "\n")
             sys.stdout.flush()

@@ -24,6 +24,7 @@ class MyConvLayer(object):
         # initialize weights with random weights
         W_bound = np.sqrt(6. / (fan_in + fan_out))
         b_values = np.zeros((filter_shape[0],), dtype=theano.config.floatX)
+
         if params[0] == None:
             self.W = theano.shared(np.asarray(
                 rng.uniform(low=-W_bound, high=W_bound, size=filter_shape),
@@ -35,7 +36,7 @@ class MyConvLayer(object):
 
         self.conv_out = conv.conv2d(input=input, filters=self.W, filter_shape=filter_shape, image_shape=image_shape, border_mode=border_mode)
 
-        self.output = activation(self.conv_out * self.conv_out + self.b.dimshuffle('x', 0, 'x', 'x'))
+        self.output = activation(self.conv_out + self.b.dimshuffle('x', 0, 'x', 'x'))
 
         self.params = [self.W, self.b]
 
