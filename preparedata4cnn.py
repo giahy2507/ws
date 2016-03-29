@@ -5,7 +5,6 @@ from sys import stdout
 import time
 import sys
 
-
 class Vocabulary(object):
     def __init__(self, word_index, word_freq, alphabet, min_count):
         self.word_index = word_index
@@ -190,6 +189,8 @@ def build_vocab(file_path, save_path = "model/vocab.bin", alphabet_path = "rule/
 
 if __name__ == "__main__":
 
+    start_total = time.time()
+
     with open("model/vocab.bin", mode="rb") as f:
         vocabulary = pickle.load(f)
     print("Finish read Vocab")
@@ -200,8 +201,8 @@ if __name__ == "__main__":
 
     # [index_A index_B index_C index_D index E] ---------- label_C
 
-    X = np.array([[0,0,0,0,0]])
-    Y = np.array([0])
+    X = np.empty((0,5),dtype=np.int32)
+    Y = np.empty((0),dtype=np.int32)
 
     start = time.clock()
     for i, line in enumerate(lines):
@@ -224,34 +225,48 @@ if __name__ == "__main__":
     print(Y.shape)
     print("Finish process vtb")
 
-    fi = open("data/vcl.pre.txt", mode="r")
-    print("Processing vtb")
-
-    start = time.clock()
-    for i, line in enumerate(fi):
-        if i % 10000 == 0:
-            end = time.clock()
-            sys.stdout.write("Prepare data from line "+ str( i - 10000) +  " to line " +str(i) +" : " + str( int(end - start) )+ "s\n")
-            sys.stdout.flush()
-            start = time.clock()
-        if i % 100000 == 0:
-            valid_number = int(X.shape[0]*0.8)
-            X_train, Y_train, X_validation, Y_validation = X[:valid_number], Y[:valid_number], X[valid_number:], Y[valid_number:]
-            with open("data/vtb.pre.txt.train.nparray", mode="wb") as f:
-                pickle.dump((X_train, Y_train, X_validation, Y_validation),f)
-            print("Saved data to ", "data/vtb.pre.txt.train.nparray")
-            start = time.clock()
-        A = line.replace("_"," ").split()
-        sentence_indexs, tag_results = vocabulary.sen_2_index(line)
-
-        if (len(sentence_indexs) != len(tag_results)):
-            print("2 thang nay ko bang ne")
-        else:
-            xx, yy = gen_data_from_sentence_indexs(sentence_indexs,tag_results)
-            X = np.concatenate((X,xx), axis=0)
-            Y = np.concatenate((Y,yy))
-    fi.close()
-    print("Finish process vcl")
+    # fi = open("data/vcl.pre.txt", mode="r")
+    # print("Processing vtb")
+    #
+    # start = time.clock()
+    # for i, line in enumerate(fi):
+    #     if i % 10000 == 0:
+    #         end = time.clock()
+    #         sys.stdout.write("Prepare data from line "+ str( i - 10000) +  " to line " +str(i) +" : " + str( int(end - start) )+ "s\n")
+    #         sys.stdout.flush()
+    #         start = time.clock()
+    #     if i % 100000 == 0:
+    #         valid_number = int(X.shape[0]*0.8)
+    #         X_train, Y_train, X_validation, Y_validation = X[:valid_number], Y[:valid_number], X[valid_number:], Y[valid_number:]
+    #         with open("data/vtb.pre.txt.train.nparray", mode="wb") as f:
+    #             pickle.dump((X_train, Y_train, X_validation, Y_validation),f)
+    #         print("Saved data to ", "data/vtb.pre.txt.train.nparray")
+    #         start = time.clock()
+    #     A = line.replace("_"," ").split()
+    #     sentence_indexs, tag_results = vocabulary.sen_2_index(line)
+    #
+    #     if (len(sentence_indexs) != len(tag_results)):
+    #         print("2 thang nay ko bang ne")
+    #     else:
+    #         xx, yy = gen_data_from_sentence_indexs(sentence_indexs,tag_results)
+    #         X = np.concatenate((X,xx), axis=0)
+    #         Y = np.concatenate((Y,yy))
+    # fi.close()
+    # print("Finish process vcl")
+    first1_X = X[0]
+    first2_X = X[176492]
+    first3_X = X[176492 + 166828]
+    last1_X = X[176492-1]
+    last2_X = X[176492 + 166828 - 1]
+    last3_X = X[-1]
+    print("first1_X", first1_X)
+    print("last1_X", last1_X)
+    print("first2_X", first2_X)
+    print("last2_X", last2_X)
+    print("first3_X", first3_X)
+    print("last3_X", last3_X)
+    end_total = time.time()
+    print("Total time: ", end_total - start_total)
 
     valid_number = int(X.shape[0]*0.8)
     X_train, Y_train, X_validation, Y_validation = X[:valid_number], Y[:valid_number], X[valid_number:], Y[valid_number:]
