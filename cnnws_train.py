@@ -11,6 +11,7 @@ from lasagne.updates import adam
 import os
 import time
 
+
 if __name__ == "__main__":
 
     with open("data/vtb.pre.txt.train.np", mode="rb") as f:
@@ -148,12 +149,12 @@ if __name__ == "__main__":
 
         if best_valid_err > val_err:
             best_valid_err = val_err
-            sys.stdout.write("Epoch "+str(epoch_i)+" Train cost: "+ str(train_cost)+ "Train err: "+ str(train_err) + "Time: " + end_train - start_train + " Validation cost: "+ str(valid_cost)+" Validation err "+ str(val_err) + " Test cost: "+ str(test_cost)+" Test err "+ str(test_err)  + ",counter "+str(counter)+ " __best__ \n")
+            sys.stdout.write("Epoch "+str(epoch_i)+" Train cost: "+ str(train_cost)+ "Train err: "+ str(train_err) + "Time: " + end_train - start_train + " Validation cost: "+ str(val_cost)+" Validation err "+ str(val_err) + " Test cost: "+ str(test_cost)+" Test err "+ str(test_err)  + ",counter "+str(counter)+ " __best__ \n")
             sys.stdout.flush()
             counter = 0
             with open("model/saveweight.bin", mode="wb") as f:
                 pickle.dump(params,f)
         else:
             counter +=1
-            sys.stdout.write("Epoch "+str(epoch_i)+" Train cost: "+ str(train_cost)+ "Train err: "+ str(train_err) + "Time: " + end_train - start_train + " Validation cost: "+ str(valid_cost)+" Validation err "+ str(val_err) + " Test cost: "+ str(test_cost)+" Test err "+ str(test_err)  + ",counter "+str(counter)+ "\n")
+            sys.stdout.write("Epoch "+str(epoch_i)+" Train cost: "+ str(train_cost)+ "Train err: "+ str(train_err) + "Time: " + end_train - start_train + " Validation cost: "+ str(val_cost)+" Validation err "+ str(val_err) + " Test cost: "+ str(test_cost)+" Test err "+ str(test_err)  + ",counter "+str(counter)+ "\n")
             sys.stdout.flush()
